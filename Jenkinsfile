@@ -17,9 +17,10 @@ pipeline {
                         error "Error: IMAGE_NAME or IMAGE_TAG is not set."
                     }
                     sh """
-                        if docker ps -a --filter "name=${IMAGE_NAME}" | grep ${IMAGE_NAME}; then
+                        CONTAINER_ID=$(docker ps -aq --filter "name=${IMAGE_NAME}")
+                        if [ ! -z "$CONTAINER_ID" ]; then
                             echo "Removing existing container ${IMAGE_NAME}..."
-                            docker stop ${IMAGE_NAME} && docker rm ${IMAGE_NAME}
+                            docker stop $CONTAINER_ID && docker rm $CONTAINER_ID
                         fi
 
                         echo "Building Docker image..."
@@ -32,7 +33,7 @@ pipeline {
             steps {
                 sh """
                     echo "Running Docker container..."
-                    docker run -d -p 80:5000 -e PORT=5000 --rm --name ${IMAGE_NAME} ${IMAGE_NAME}:${IMAGE_TAG}
+                    docker run -d -p 80:5000 -e PORT=5000 --name ${IMAGE_NAME} ${IMAGE_NAME}:${IMAGE_TAG}
                     sleep 5
 
                     if ! docker ps --filter "name=${IMAGE_NAME}" | grep ${IMAGE_NAME}; then
