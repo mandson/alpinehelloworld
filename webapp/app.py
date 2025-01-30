@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello():
-    return 'Hello! Welcome to mandson corp technology'
+    return 'Hello! Welcome to mandson corp technology BUild 2 '
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
